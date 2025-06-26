@@ -28,6 +28,8 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install
+        env:
+          EVENTHUB_CONN_STRING: ${{ secrets.EVENTHUB_CONN_STRING }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
