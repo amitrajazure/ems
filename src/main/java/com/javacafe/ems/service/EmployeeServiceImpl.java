@@ -1,10 +1,10 @@
 package com.javacafe.ems.service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.javacafe.ems.dto.EmployeeDto;
@@ -21,11 +21,22 @@ import lombok.AllArgsConstructor;
 public class EmployeeServiceImpl implements EmployeeService {
 
 	EmployeeRepository repository;
+	
+	KafkaTemplate<String, String> kafkaTemplate;
+	
+	@KafkaListener(topics = "employee-events", groupId = "$Default")
+	public void consumeEventHub(String message) {
+		System.out.println("Message consumed: " +message);
+	}
+	
 	@Override
 	public EmployeeDto createEmployee(EmployeeDto dto) {
-		Employee employee =  EmployeeMapper.mapToEmployee(dto);
-		return EmployeeMapper.mapToEmployeeDto(repository.save(employee));
+		Employee employee = EmployeeMapper.mapToEmployee(dto);
+		Employee savedEmployee = repository.save(employee);
+		kafkaTemplate.send("employee-events", savedEmployee.getId().toString(), savedEmployee.toString());
+		return EmployeeMapper.mapToEmployeeDto(savedEmployee);
 	}
+	
 	@Override
 	public List<EmployeeDto> getAllEmployees() {
 		return repository.findAll().stream().map(EmployeeMapper::mapToEmployeeDto)

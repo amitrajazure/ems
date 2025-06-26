@@ -9,6 +9,8 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  EVENTHUB_CONN_STRING: ${{ secrets.EVENTHUB_CONN_STRING }}
 jobs:
   build:
     runs-on: windows-latest
