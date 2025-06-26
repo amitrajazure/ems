@@ -10,7 +10,7 @@ public class EventHubKafkaListener {
 		System.out.println("inside kafka constructor");
 	}
 	
-	@KafkaListener(topics = "${spring.kafka.topic}", groupId = "${spring.kafka.consumer.group-id}")
+	//@KafkaListener(topics = "${spring.kafka.topic}", groupId = "${spring.kafka.consumer.group-id}")
 	public void consume(String message) {
 		System.out.println("Message consumed: " +message);
 	}

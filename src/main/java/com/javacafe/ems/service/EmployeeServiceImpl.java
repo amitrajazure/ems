@@ -33,7 +33,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeDto createEmployee(EmployeeDto dto) {
 		Employee employee = EmployeeMapper.mapToEmployee(dto);
 		Employee savedEmployee = repository.save(employee);
+		System.out.println("before event");
 		kafkaTemplate.send("employee-events", savedEmployee.getId().toString(), savedEmployee.toString());
+		System.out.println("after event");
 		return EmployeeMapper.mapToEmployeeDto(savedEmployee);
 	}
 	
